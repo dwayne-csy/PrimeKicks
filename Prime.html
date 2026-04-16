@@ -622,7 +622,7 @@
   </div>
   <div class="cart-drop-footer">
     <div class="cart-total-row"><span>Total</span><span>$<span id="cartTotal">0.00</span></span></div>
-    <button class="checkout-btn-drop" id="checkoutBtn">Checkout (demo)</button>
+    <button class="checkout-btn-drop" id="checkoutBtn">Checkout </button>
   </div>
 </div>
 
@@ -814,7 +814,7 @@
   cartIconBtn.addEventListener("click", (e) => { e.stopPropagation(); cartDropdown.classList.toggle("open"); });
   document.addEventListener("click", (e) => { if (!cartDropdown.contains(e.target) && e.target !== cartIconBtn) cartDropdown.classList.remove("open"); });
   document.getElementById("clearCartBtn").addEventListener("click", () => { clearCart(); toast("Cart cleared"); });
-  document.getElementById("checkoutBtn").addEventListener("click", () => { const cart = getCart(); if (!cart.length) { toast("Cart empty"); return; } if (!getCurrentSession()) { openLoginModal("Login to checkout"); return; } alert(`✨ Demo order placed!\nTotal: $${document.getElementById("cartTotal").textContent}\nThanks for shopping at PrimeKicks!`); clearCart(); cartDropdown.classList.remove("open"); });
+  document.getElementById("checkoutBtn").addEventListener("click", () => { const cart = getCart(); if (!cart.length) { toast("Cart empty"); return; } if (!getCurrentSession()) { openLoginModal("Login to checkout"); return; } alert(`✨ Order Placed!\nTotal: $${document.getElementById("cartTotal").textContent}\nThanks for shopping at PrimeKicks!`); clearCart(); cartDropdown.classList.remove("open"); });
 
   // Auth modal
   const authModal = document.getElementById("authModal"), tabLogin = document.getElementById("tabLogin"), tabRegister = document.getElementById("tabRegister"), submitBtn = document.getElementById("authSubmitBtn"), authMsgDiv = document.getElementById("authMsg");
