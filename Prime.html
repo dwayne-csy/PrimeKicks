@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>PrimeKicks | Premium Sneaker Shop</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', 'Inter', sans-serif; }
+
+    body { background: #f4f4f6; color: #1a1a2e; min-height: 100vh; }
+
+    .header {
+      background: #0d0f1a;
+      color: white;
+      padding: 0 2rem;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+
+    .logo h2 {
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #ffcd94, #ff8c42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo span { font-size: 0.68rem; color: #555; letter-spacing: 1px; text-transform: uppercase; }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .user-pill {
+      background: #1c1f2e;
+      border: 1px solid #2a2d3e;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.82rem;
+      color: #ccc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-btn {
+      background: transparent;
+      border: 1px solid #2a2d3e;
+      color: #ccc;
+      padding: 7px 16px;
+      border-radius: 40px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .header-btn:hover { border-color: #ff8c42; color: #ff8c42; }
+
+    .cart-icon-btn {
+      position: relative;
+      background: #1c1f2e;
+      border: 1px solid #2a2d3e;
+      color: white;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .cart-icon-btn:hover { border-color: #ff8c42; }
+
+    .cart-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #e5303a;
+      color: white;
+      font-size: 0.62rem;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #0d0f1a;
+      transition: transform 0.2s;
+    }
+    .cart-badge.pop { transform: scale(1.4); }
+    .cart-badge.hidden { display: none; }
+
+    .cart-dropdown {
+      position: fixed;
+      top: 68px;
+      right: 1.5rem;
+      width: 360px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+      border: 1px solid #eee;
+      z-index: 200;
+      overflow: hidden;
+      display: none;
+      animation: dropIn 0.2s ease;
+    }
+    .cart-dropdown.open { display: block; }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cart-drop-header {
+      padding: 16px 18px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .cart-drop-header h3 { font-size: 1rem; font-weight: 700; }
+
+    .cart-drop-items { max-height: 280px; overflow-y: auto; padding: 0 18px; }
+
+    .cart-drop-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .cart-drop-item-icon { 
+      width: 48px; 
+      height: 48px;
+      background: #f5f5f5;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .cart-drop-item-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cart-drop-item-info { flex: 1; }
+    .cart-drop-item-info strong { font-size: 0.88rem; display: block; }
+    .cart-drop-item-info small { color: #888; font-size: 0.78rem; }
+    .cart-drop-item-controls { display: flex; align-items: center; gap: 6px; }
+    .qty-btn {
+      width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd;
+      background: #f5f5f5; cursor: pointer; font-size: 0.85rem; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { background: #ffe0c4; border-color: #ff8c42; }
+    .remove-btn { color: #e5303a; background: none; border: none; cursor: pointer; font-size: 0.8rem; margin-left: 2px; }
+
+    .cart-drop-footer {
+      padding: 14px 18px;
+      border-top: 1px solid #f0f0f0;
+      background: #fafafa;
+    }
+    .cart-total-row { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 12px; font-size: 1rem; }
+
+    .checkout-btn-drop {
+      width: 100%;
+      background: linear-gradient(135deg, #ff8c42, #ff6b1a);
+      color: white;
+      border: none;
+      padding: 11px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .checkout-btn-drop:hover { opacity: 0.88; }
+
+    .cart-empty-msg { padding: 24px; text-align: center; color: #aaa; font-size: 0.88rem; }
+
+    .clear-cart-btn { background: none; border: none; color: #e5303a; font-size: 0.75rem; cursor: pointer; }
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .auth-modal {
+      background: white;
+      border-radius: 28px;
+      width: 420px;
+      max-width: 95vw;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .auth-modal-header {
+      background: #0d0f1a;
+      padding: 28px 28px 24px;
+      text-align: center;
+    }
+    .auth-modal-header h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffcd94, #ff8c42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .auth-modal-header p { color: #666; font-size: 0.82rem; margin-top: 4px; }
+
+    .auth-tabs {
+      display: flex;
+      background: #f5f5f7;
+      margin: 20px 24px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #eee;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #888;
+      transition: all 0.2s;
+      border-radius: 10px;
+    }
+    .auth-tab.active { background: white; color: #0d0f1a; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+    .auth-body { padding: 20px 24px 24px; }
+
+    .auth-input-wrap { margin-bottom: 14px; }
+    .auth-input-wrap label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #777; margin-bottom: 5px; }
+    .auth-input-wrap input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: 0.2s;
+      background: #fafafa;
+    }
+    .auth-input-wrap input:focus { border-color: #ff8c42; background: white; box-shadow: 0 0 0 3px rgba(255,140,66,0.12); }
+
+    .auth-submit {
+      width: 100%;
+      background: #0d0f1a;
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .auth-submit:hover { background: #ff8c42; }
+
+    .auth-msg { margin-top: 10px; font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; }
+    .auth-msg.error { background: #fff0f0; color: #c00; }
+    .auth-msg.success { background: #f0fff4; color: #0a7a3c; }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(255,255,255,0.1);
+      border: none; color: white;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* FILTER BAR */
+    .filter-bar {
+      background: white;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 14px 2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 68px;
+      z-index: 90;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+      max-width: 280px;
+    }
+    .search-wrap .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+    .search-input {
+      width: 100%;
+      padding: 9px 14px 9px 36px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 40px;
+      font-size: 0.88rem;
+      outline: none;
+      background: #fafafa;
+      transition: 0.2s;
+    }
+    .search-input:focus { border-color: #ff8c42; background: white; box-shadow: 0 0 0 3px rgba(255,140,66,0.1); }
+    .search-clear {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: #aaa;
+      display: none;
+      line-height: 1;
+      padding: 2px;
+    }
+    .search-clear:hover { color: #555; }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      white-space: nowrap;
+    }
+
+    .filter-select {
+      padding: 8px 32px 8px 13px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 40px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      background: #fafafa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E") no-repeat right 12px center;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+      transition: 0.2s;
+      color: #1a1a2e;
+    }
+    .filter-select:focus { border-color: #ff8c42; box-shadow: 0 0 0 3px rgba(255,140,66,0.1); }
+
+    .reset-btn {
+      background: none;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 40px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #e5303a;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .reset-btn:hover { border-color: #e5303a; background: #fff0f0; }
+
+    .filter-divider {
+      width: 1px;
+      height: 28px;
+      background: #e8e8e8;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #aaa;
+    }
+    .no-results .no-results-icon { font-size: 3rem; margin-bottom: 12px; }
+    .no-results p { font-size: 0.95rem; }
+    .no-results small { font-size: 0.8rem; margin-top: 6px; display: block; }
+
+    /* MAIN */
+    .container { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .hero-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .hero-bar h1 { font-size: 1.6rem; font-weight: 800; }
+    .hero-bar h1 span { color: #ff8c42; }
+
+    .product-count-pill {
+      background: #0d0f1a;
+      color: #ffcd94;
+      padding: 5px 14px;
+      border-radius: 40px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #ebebeb;
+      transition: all 0.25s;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,0.08); border-color: #ffcd94; }
+
+    .product-img {
+      background: #f5f5f5;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .product-card:hover .product-img img { transform: scale(1.03); }
+
+    .product-info { padding: 1rem; }
+    .product-title { font-weight: 700; font-size: 1rem; }
+    .product-brand { font-size: 0.68rem; color: #ff8c42; text-transform: uppercase; letter-spacing: 1px; margin: 3px 0 4px; font-weight: 600; }
+    .product-cat { font-size: 0.65rem; color: #888; margin-bottom: 8px; }
+    .product-price { font-size: 1.3rem; font-weight: 800; color: #0d0f1a; margin-bottom: 10px; }
+
+    .product-btns { display: flex; gap: 8px; }
+
+    .btn-cart {
+      flex: 1;
+      background: #0d0f1a;
+      color: white;
+      border: none;
+      padding: 9px 0;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-cart:hover { background: #1e2235; }
+
+    .btn-buy {
+      flex: 1;
+      background: linear-gradient(135deg, #ff8c42, #ff6b1a);
+      color: white;
+      border: none;
+      padding: 9px 0;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-buy:hover { opacity: 0.85; }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: #0d0f1a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      z-index: 500;
+      transition: transform 0.3s ease, opacity 0.3s;
+      opacity: 0;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    footer { text-align: center; padding: 2rem; color: #999; font-size: 0.75rem; margin-top: 2rem; border-top: 1px solid #e8e8e8; }
+
+    @media (max-width: 600px) {
+      .cart-dropdown { right: 0.5rem; width: calc(100vw - 1rem); }
+      .header { padding: 0 1rem; }
+      .filter-bar { padding: 12px 1rem; gap: 8px; }
+      .search-wrap { max-width: 100%; }
+      .filter-divider { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <h2>PRIMEKICKS</h2>
+    <span>Premium Shop</span>
+  </div>
+  <div class="header-right">
+    <div id="userPill" class="user-pill">👤 Guest</div>
+    <button id="loginOpenBtn" class="header-btn">Login / Register</button>
+    <button id="logoutBtn" class="header-btn" style="display:none;">Logout</button>
+    <button class="cart-icon-btn" id="cartIconBtn" title="Cart">
+      🛒
+      <span class="cart-badge hidden" id="cartBadge">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- FILTER BAR with Brand and Category -->
+<div class="filter-bar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search sneakers…" autocomplete="off">
+    <button class="search-clear" id="searchClear" title="Clear">✕</button>
+  </div>
+  <div class="filter-divider"></div>
+
+  <!-- Brand Filter -->
+  <div class="filter-group">
+    <span class="filter-label">Brand</span>
+    <select class="filter-select" id="filterBrand">
+      <option value="">All Brands</option>
+      <option value="Nike">Nike</option>
+      <option value="Adidas">Adidas</option>
+      <option value="New Balance">New Balance</option>
+      <option value="Jordan">Jordan</option>
+      <option value="Hoka">Hoka</option>
+      <option value="DC Shoes">DC Shoes</option>
+      <option value="Vans">Vans</option>
+      <option value="Converse">Converse</option>
+      <option value="Puma">Puma</option>
+    </select>
+  </div>
+
+  <div class="filter-divider"></div>
+
+  <!-- Category Filter -->
+  <div class="filter-group">
+    <span class="filter-label">Category</span>
+    <select class="filter-select" id="filterCategory">
+      <option value="">All</option>
+      <option value="Lifestyle">Lifestyle</option>
+      <option value="Running">Running</option>
+      <option value="Basketball">Basketball</option>
+      <option value="Trail">Trail</option>
+      <option value="Skate">Skate</option>
+    </select>
+  </div>
+
+  <div class="filter-divider"></div>
+
+  <!-- Sort -->
+  <div class="filter-group">
+    <span class="filter-label">Sort</span>
+    <select class="filter-select" id="filterSort">
+      <option value="default">Featured</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+      <option value="name-asc">Name: A → Z</option>
+    </select>
+  </div>
+
+  <button class="reset-btn" id="resetFilters">✕ Reset</button>
+</div>
+
+<!-- CART DROPDOWN -->
+<div class="cart-dropdown" id="cartDropdown">
+  <div class="cart-drop-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="clear-cart-btn" id="clearCartBtn">Clear all</button>
+  </div>
+  <div id="cartDropItems" class="cart-drop-items">
+    <div class="cart-empty-msg">Add some kicks to get started!</div>
+  </div>
+  <div class="cart-drop-footer">
+    <div class="cart-total-row"><span>Total</span><span>$<span id="cartTotal">0.00</span></span></div>
+    <button class="checkout-btn-drop" id="checkoutBtn">Checkout (demo)</button>
+  </div>
+</div>
+
+<!-- AUTH MODAL (same as before, simplified) -->
+<div class="modal-overlay" id="authModal">
+  <div class="auth-modal" style="position:relative;">
+    <div class="auth-modal-header">
+      <button class="modal-close" id="modalClose">✕</button>
+      <h2>PRIMEKICKS</h2>
+      <p>Access your sneaker closet</p>
+    </div>
+    <div class="auth-tabs"><button class="auth-tab active" id="tabLogin">Login</button><button class="auth-tab" id="tabRegister">Register</button></div>
+    <div class="auth-body">
+      <div class="auth-input-wrap"><label>Username</label><input type="text" id="authUsername" placeholder="Username"></div>
+      <div class="auth-input-wrap"><label>Password</label><input type="password" id="authPassword" placeholder="Min 3 chars"></div>
+      <button class="auth-submit" id="authSubmitBtn">Login</button>
+      <div id="authMsg" style="display:none;" class="auth-msg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="hero-bar"><h1>Latest <span>Drops</span> 👟</h1><div class="product-count-pill" id="productCountBadge">Loading...</div></div>
+  <div id="productGrid" class="product-grid"></div>
+</div>
+<div id="toast"></div>
+<footer>PrimeKicks — Real inventory loaded</footer>
+
+<script>
+(function() {
+  // ---------- PRODUCT DATABASE (based on file list) ----------
+  const productsData = [
+    { id: "p1", name: "Nike Air Jordan 1 Retro High", brand: "Nike", category: "Basketball", price: 159, image: "1.jpg" },
+    { id: "p2", name: "Nike Air Jordan 1 Retro High", brand: "Nike", category: "Basketball", price: 159, image: "2.jpg" },
+    { id: "p3", name: "Adidas Astir", brand: "Adidas", category: "Lifestyle", price: 89, image: "3.jpg" },
+    { id: "p4", name: "Adidas Campus", brand: "Adidas", category: "Lifestyle", price: 79, image: "4.jpg" },
+    { id: "p5", name: "Adidas Samba", brand: "Adidas", category: "Lifestyle", price: 89, image: "5.jpg" },
+    { id: "p6", name: "Adidas Campus", brand: "Adidas", category: "Lifestyle", price: 79, image: "6.jpg" },
+    { id: "p7", name: "Nike Dunks", brand: "Nike", category: "Basketball", price: 109, image: "7.jpg" },
+    { id: "p8", name: "Nike Dunks", brand: "Nike", category: "Basketball", price: 109, image: "8.jpg" },
+    { id: "p9", name: "New Balance 530", brand: "New Balance", category: "Running", price: 99, image: "9.jpg" },
+    { id: "p10", name: "New Balance 530", brand: "New Balance", category: "Running", price: 99, image: "10.jpg" },
+    { id: "p11", name: "New Balance 1960", brand: "New Balance", category: "Running", price: 119, image: "11.jpg" },
+    { id: "p12", name: "Jordan 3", brand: "Jordan", category: "Basketball", price: 169, image: "12.jpg" },
+    { id: "p13", name: "Jordan 3", brand: "Jordan", category: "Basketball", price: 169, image: "13.jpg" },
+    { id: "p14", name: "Hoka", brand: "Hoka", category: "Running", price: 139, image: "14.jpg" },
+    { id: "p15", name: "Hoka", brand: "Hoka", category: "Running", price: 139, image: "15.jpg" },
+    { id: "p16", name: "DC Shoes", brand: "DC Shoes", category: "Skate", price: 69, image: "16.jpg" },
+    { id: "p17", name: "DC Shoes Court Graffik Skate", brand: "DC Shoes", category: "Skate", price: 74, image: "17.jpg" },
+    { id: "p18", name: "Vans Old School", brand: "Vans", category: "Skate", price: 59, image: "18.jpg" },
+    { id: "p19", name: "Vans Sk8 Checkered", brand: "Vans", category: "Skate", price: 64, image: "19.jpg" },
+    { id: "p20", name: "Converse Chuck Taylor High Cut", brand: "Converse", category: "Lifestyle", price: 69, image: "20.jpg" },
+    { id: "p21", name: "Converse Chuck Taylor Low Cut", brand: "Converse", category: "Lifestyle", price: 64, image: "21.jpg" },
+    { id: "p22", name: "Puma Speed Cat", brand: "Puma", category: "Lifestyle", price: 89, image: "22.jpg" },
+    { id: "p23", name: "Puma Suede", brand: "Puma", category: "Lifestyle", price: 79, image: "23.jpg" }
+  ];
+
+  // Auth & cart storage (reused pattern)
+  const STORAGE_USERS = "prime_users";
+  const STORAGE_SESSION = "prime_session";
+  const STORAGE_GUEST_CART = "prime_guest_cart";
+
+  function hashPassword(pwd) {
+    let hash = 0;
+    for (let i = 0; i < pwd.length; i++) { hash = ((hash << 5) - hash) + pwd.charCodeAt(i); hash |= 0; }
+    return "h" + hash;
+  }
+
+  function initUsers() {
+    if (!localStorage.getItem(STORAGE_USERS)) {
+      localStorage.setItem(STORAGE_USERS, JSON.stringify([
+        { username: "alex", passwordHash: hashPassword("shoefreak") },
+        { username: "jordan", passwordHash: hashPassword("retro23") }
+      ]));
+    }
+  }
+
+  function getCurrentSession() { try { return JSON.parse(localStorage.getItem(STORAGE_SESSION)); } catch(e) { return null; } }
+  function setSession(obj) { if (obj && obj.username) localStorage.setItem(STORAGE_SESSION, JSON.stringify(obj)); else localStorage.removeItem(STORAGE_SESSION); }
+
+  function getCart() {
+    const s = getCurrentSession();
+    if (s && s.username) return s.cart || [];
+    try { return JSON.parse(localStorage.getItem(STORAGE_GUEST_CART)) || []; } catch(e) { return []; }
+  }
+  function saveCart(cart) {
+    const s = getCurrentSession();
+    if (s && s.username) { s.cart = cart; setSession(s); }
+    else localStorage.setItem(STORAGE_GUEST_CART, JSON.stringify(cart));
+    renderCartUI();
+  }
+  function addToCart(product) {
+    const cart = getCart();
+    const idx = cart.findIndex(i => i.id === product.id);
+    if (idx !== -1) cart[idx].quantity += 1;
+    else cart.push({ ...product, quantity: 1 });
+    saveCart(cart);
+    animateBadge();
+  }
+  function removeFromCart(id) { saveCart(getCart().filter(i => i.id !== id)); }
+  function updateQty(id, qty) { if (qty <= 0) removeFromCart(id); else { const cart = getCart(); const idx = cart.findIndex(i => i.id === id); if (idx !== -1) { cart[idx].quantity = qty; saveCart(cart); } } }
+  function clearCart() { saveCart([]); }
+  function animateBadge() { const b = document.getElementById("cartBadge"); b.classList.add("pop"); setTimeout(() => b.classList.remove("pop"), 200); }
+  function escapeHtml(str) { return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 2000); }
+
+  function renderCartUI() {
+    const cart = getCart();
+    const badge = document.getElementById("cartBadge");
+    const itemsContainer = document.getElementById("cartDropItems");
+    const totalSpan = document.getElementById("cartTotal");
+    const totalCount = cart.reduce((s, i) => s + i.quantity, 0);
+    if (totalCount > 0) { badge.textContent = totalCount > 99 ? "99+" : totalCount; badge.classList.remove("hidden"); } else { badge.classList.add("hidden"); }
+    if (!cart.length) { itemsContainer.innerHTML = '<div class="cart-empty-msg">No shoes yet — add some kicks!</div>'; if (totalSpan) totalSpan.textContent = "0.00"; return; }
+    let total = 0;
+    itemsContainer.innerHTML = cart.map(item => {
+      total += item.price * item.quantity;
+      return `<div class="cart-drop-item"><div class="cart-drop-item-icon"><img src="products/${item.image}" alt="${escapeHtml(item.name)}" onerror="this.src='https://placehold.co/48?text=shoe'"></div><div class="cart-drop-item-info"><strong>${escapeHtml(item.name)}</strong><small>$${item.price} each</small></div><div class="cart-drop-item-controls"><button class="qty-btn" data-action="minus" data-id="${item.id}">−</button><span style="font-size:0.85rem;font-weight:600;min-width:16px;text-align:center;">${item.quantity}</span><button class="qty-btn" data-action="plus" data-id="${item.id}">+</button><button class="remove-btn" data-id="${item.id}">✕</button></div></div>`;
+    }).join("");
+    if (totalSpan) totalSpan.textContent = total.toFixed(2);
+    itemsContainer.querySelectorAll(".qty-btn").forEach(btn => btn.addEventListener("click", () => { const id = btn.dataset.id; const item = getCart().find(i => i.id === id); if (item) updateQty(id, item.quantity + (btn.dataset.action === "plus" ? 1 : -1)); }));
+    itemsContainer.querySelectorAll(".remove-btn").forEach(btn => btn.addEventListener("click", () => removeFromCart(btn.dataset.id)));
+  }
+
+  function updateAuthUI() {
+    const s = getCurrentSession();
+    const pill = document.getElementById("userPill");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const loginBtn = document.getElementById("loginOpenBtn");
+    if (s && s.username) { pill.innerHTML = `👋 ${escapeHtml(s.username)}`; logoutBtn.style.display = "inline-block"; loginBtn.style.display = "none"; }
+    else { pill.innerHTML = "👤 Guest"; logoutBtn.style.display = "none"; loginBtn.style.display = "inline-block"; }
+    renderCartUI();
+  }
+
+  function register(username, password) { if (!username || username.trim().length < 2) return "Username min 2 chars"; if (!password || password.length < 3) return "Password min 3 chars"; const users = JSON.parse(localStorage.getItem(STORAGE_USERS) || "[]"); if (users.find(u => u.username === username.trim())) return "Username taken"; users.push({ username: username.trim(), passwordHash: hashPassword(password) }); localStorage.setItem(STORAGE_USERS, JSON.stringify(users)); return null; }
+  function login(username, password) { const users = JSON.parse(localStorage.getItem(STORAGE_USERS) || "[]"); const user = users.find(u => u.username === username.trim()); if (!user) return "User not found"; if (user.passwordHash !== hashPassword(password)) return "Wrong password"; const guestCart = JSON.parse(localStorage.getItem(STORAGE_GUEST_CART) || "[]"); localStorage.removeItem(STORAGE_GUEST_CART); setSession({ username: user.username, cart: guestCart }); return null; }
+
+  // Filter state
+  let filterState = { search: "", brand: "", category: "", sort: "default" };
+  
+  function getFilteredProducts() {
+    let list = [...productsData];
+    if (filterState.search) { const q = filterState.search.toLowerCase(); list = list.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)); }
+    if (filterState.brand) list = list.filter(p => p.brand === filterState.brand);
+    if (filterState.category) list = list.filter(p => p.category === filterState.category);
+    if (filterState.sort === "price-asc") list.sort((a,b) => a.price - b.price);
+    else if (filterState.sort === "price-desc") list.sort((a,b) => b.price - a.price);
+    else if (filterState.sort === "name-asc") list.sort((a,b) => a.name.localeCompare(b.name));
+    return list;
+  }
+
+  function renderProducts() {
+    const filtered = getFilteredProducts();
+    const grid = document.getElementById("productGrid");
+    const badge = document.getElementById("productCountBadge");
+    if (!filtered.length) { badge.textContent = "0 results"; grid.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><p>No sneakers match.</p><small>Try different filters.</small></div>`; return; }
+    badge.textContent = `${filtered.length} of ${productsData.length} styles`;
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card">
+        <div class="product-img"><img src="products/${p.image}" alt="${escapeHtml(p.name)}" onerror="this.src='https://placehold.co/300x200?text=No+Image'"></div>
+        <div class="product-info">
+          <div class="product-title">${escapeHtml(p.name)}</div>
+          <div class="product-brand">${escapeHtml(p.brand)}</div>
+          <div class="product-cat">${escapeHtml(p.category)}</div>
+          <div class="product-price">$${p.price}</div>
+          <div class="product-btns">
+            <button class="btn-cart" data-id="${p.id}">Add to Cart</button>
+            <button class="btn-buy" data-id="${p.id}">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+    grid.querySelectorAll(".btn-cart").forEach(btn => { btn.addEventListener("click", () => { const p = productsData.find(x => x.id === btn.dataset.id); if (p) { addToCart(p); toast(`✅ ${p.name} added!`); } }); });
+    grid.querySelectorAll(".btn-buy").forEach(btn => { btn.addEventListener("click", () => { const p = productsData.find(x => x.id === btn.dataset.id); if (!p) return; if (!getCurrentSession()) { openLoginModal("🔐 Please login to buy"); return; } addToCart(p); document.getElementById("cartDropdown").classList.add("open"); toast(`🚀 Ready to checkout!`); }); });
+  }
+
+  function resetFilters() { filterState = { search: "", brand: "", category: "", sort: "default" }; document.getElementById("searchInput").value = ""; document.getElementById("filterBrand").value = ""; document.getElementById("filterCategory").value = ""; document.getElementById("filterSort").value = "default"; document.getElementById("searchClear").style.display = "none"; renderProducts(); }
+
+  // Event listeners
+  document.getElementById("searchInput").addEventListener("input", (e) => { filterState.search = e.target.value.trim(); document.getElementById("searchClear").style.display = filterState.search ? "block" : "none"; renderProducts(); });
+  document.getElementById("searchClear").addEventListener("click", () => { document.getElementById("searchInput").value = ""; filterState.search = ""; document.getElementById("searchClear").style.display = "none"; renderProducts(); });
+  document.getElementById("filterBrand").addEventListener("change", (e) => { filterState.brand = e.target.value; renderProducts(); });
+  document.getElementById("filterCategory").addEventListener("change", (e) => { filterState.category = e.target.value; renderProducts(); });
+  document.getElementById("filterSort").addEventListener("change", (e) => { filterState.sort = e.target.value; renderProducts(); });
+  document.getElementById("resetFilters").addEventListener("click", resetFilters);
+
+  // Cart UI events
+  const cartIconBtn = document.getElementById("cartIconBtn"), cartDropdown = document.getElementById("cartDropdown");
+  cartIconBtn.addEventListener("click", (e) => { e.stopPropagation(); cartDropdown.classList.toggle("open"); });
+  document.addEventListener("click", (e) => { if (!cartDropdown.contains(e.target) && e.target !== cartIconBtn) cartDropdown.classList.remove("open"); });
+  document.getElementById("clearCartBtn").addEventListener("click", () => { clearCart(); toast("Cart cleared"); });
+  document.getElementById("checkoutBtn").addEventListener("click", () => { const cart = getCart(); if (!cart.length) { toast("Cart empty"); return; } if (!getCurrentSession()) { openLoginModal("Login to checkout"); return; } alert(`✨ Demo order placed!\nTotal: $${document.getElementById("cartTotal").textContent}\nThanks for shopping at PrimeKicks!`); clearCart(); cartDropdown.classList.remove("open"); });
+
+  // Auth modal
+  const authModal = document.getElementById("authModal"), tabLogin = document.getElementById("tabLogin"), tabRegister = document.getElementById("tabRegister"), submitBtn = document.getElementById("authSubmitBtn"), authMsgDiv = document.getElementById("authMsg");
+  let currentTab = "login";
+  function openLoginModal(promptText) { cartDropdown.classList.remove("open"); authModal.classList.add("open"); setTab("login"); if(promptText) toast(promptText); }
+  function showAuthMsg(msg, type) { authMsgDiv.textContent = msg; authMsgDiv.className = "auth-msg " + type; authMsgDiv.style.display = "block"; }
+  function setTab(tab) { currentTab = tab; tabLogin.classList.toggle("active", tab === "login"); tabRegister.classList.toggle("active", tab === "register"); submitBtn.textContent = tab === "login" ? "Login" : "Create Account"; authMsgDiv.style.display = "none"; }
+  tabLogin.addEventListener("click", () => setTab("login")); tabRegister.addEventListener("click", () => setTab("register"));
+  document.getElementById("loginOpenBtn").addEventListener("click", () => authModal.classList.add("open"));
+  document.getElementById("modalClose").addEventListener("click", () => authModal.classList.remove("open"));
+  authModal.addEventListener("click", (e) => { if (e.target === authModal) authModal.classList.remove("open"); });
+  submitBtn.addEventListener("click", () => { const u = document.getElementById("authUsername").value.trim(); const p = document.getElementById("authPassword").value; if (currentTab === "register") { const err = register(u, p); if (err) { showAuthMsg(err, "error"); return; } showAuthMsg("Account created! You can now login.", "success"); setTimeout(() => setTab("login"), 1200); } else { const err = login(u, p); if (err) { showAuthMsg(err, "error"); return; } updateAuthUI(); authModal.classList.remove("open"); toast(`Welcome back, ${u}!`); } });
+  document.getElementById("logoutBtn").addEventListener("click", () => { setSession(null); updateAuthUI(); toast("Logged out"); });
+
+  initUsers();
+  if (!localStorage.getItem(STORAGE_GUEST_CART)) localStorage.setItem(STORAGE_GUEST_CART, "[]");
+  updateAuthUI();
+  renderProducts();
+})();
+</script>
+</body>
+</html>
